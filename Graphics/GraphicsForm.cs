@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Threading;
+using static System.Windows.Forms.AxHost;
 namespace Graphics
 {
     public partial class GraphicsForm : Form
@@ -39,10 +40,10 @@ namespace Graphics
             float speed = 5;
 
             if (e.KeyChar == 'd')
-                renderer.translationX += speed; 
+                renderer.translationX += speed;
             if (e.KeyChar == 'a')
                 renderer.translationX -= speed;
-            
+                
             if (e.KeyChar == 'w')
                 renderer.translationY += speed;
             if (e.KeyChar == 's')
@@ -52,6 +53,20 @@ namespace Graphics
                 renderer.translationZ += speed;
             if (e.KeyChar == 'c')
                 renderer.translationZ -= speed;
+
+            if (e.KeyChar =='q')
+            {
+                renderer.scale.x *=1.1f;
+                renderer.scale.y *=1.1f;
+                renderer.scale.z *=1.1f;
+            }
+
+            if (e.KeyChar =='e')
+            {
+                renderer.scale.x /=1.1f;
+                renderer.scale.y /=1.1f;
+                renderer.scale.z /=1.1f;
+            }
 
             simpleOpenGlControl1.Refresh();
         }

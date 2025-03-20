@@ -103,3 +103,17 @@ D:\Teaching\CG c#\spring 2020\Animation - TA\Graphics\obj\Debug\Graphics.pdb
 G:\lab4\Animation - TA\Graphics\bin\Debug\Graphics.exe.config
 G:\lab4\Animation - TA\Graphics\obj\Debug\Graphics.exe
 G:\lab4\Animation - TA\Graphics\obj\Debug\Graphics.pdb
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\Graphics.exe.config
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\Graphics.exe
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\Graphics.pdb
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\GlmNet.dll
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\GlmNet.pdb
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\bin\Debug\GlmNet.xml
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.csproj.AssemblyReference.cache
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.GraphicsForm.resources
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.Properties.Resources.resources
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.csproj.GenerateResource.cache
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.csproj.CoreCompileInputs.cache
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.csproj.Up2Date
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.exe
+C:\Users\moham\OneDrive\Desktop\CG\ASSI\ASSI\Graphics\obj\Debug\Graphics.pdb

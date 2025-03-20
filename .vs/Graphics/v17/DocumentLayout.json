@@ -5,10 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F6600EA5-A7B0-425A-96E0-2448C6053140}|Graphics\\Graphics.csproj|c:\\users\\moham\\onedrive\\desktop\\cg\\assi\\assi\\graphics\\renderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F6600EA5-A7B0-425A-96E0-2448C6053140}|Graphics\\Graphics.csproj|solutionrelative:graphics\\renderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F6600EA5-A7B0-425A-96E0-2448C6053140}|Graphics\\Graphics.csproj|C:\\Users\\moham\\OneDrive\\Desktop\\CG\\ASSI\\ASSI\\graphics\\shaders\\simplevertexshader.vertexshader||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{F6600EA5-A7B0-425A-96E0-2448C6053140}|Graphics\\Graphics.csproj|solutionrelative:graphics\\shaders\\simplevertexshader.vertexshader||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 212,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -54,25 +50,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "SimpleVertexShader.vertexshader",
-              "DocumentMoniker": "C:\\Users\\moham\\OneDrive\\Desktop\\CG\\ASSI\\ASSI\\Graphics\\Shaders\\SimpleVertexShader.vertexshader",
-              "RelativeDocumentMoniker": "Graphics\\Shaders\\SimpleVertexShader.vertexshader",
-              "ToolTip": "C:\\Users\\moham\\OneDrive\\Desktop\\CG\\ASSI\\ASSI\\Graphics\\Shaders\\SimpleVertexShader.vertexshader",
-              "RelativeToolTip": "Graphics\\Shaders\\SimpleVertexShader.vertexshader",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-01T14:43:33.72Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Renderer.cs",
               "DocumentMoniker": "C:\\Users\\moham\\OneDrive\\Desktop\\CG\\ASSI\\ASSI\\Graphics\\Renderer.cs",
               "RelativeDocumentMoniker": "Graphics\\Renderer.cs",
               "ToolTip": "C:\\Users\\moham\\OneDrive\\Desktop\\CG\\ASSI\\ASSI\\Graphics\\Renderer.cs",
               "RelativeToolTip": "Graphics\\Renderer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHUAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAwJAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-01T14:37:33.179Z",
               "EditorCaption": ""
