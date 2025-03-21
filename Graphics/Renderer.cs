@@ -1,4 +1,9 @@
-﻿using System;
+﻿//Mohamed Hamid Suliman Abdalgader
+//2021170683
+//CS Level 3
+//Section 4
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,6 +18,7 @@ using GlmNet;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace Graphics
 {
@@ -22,7 +28,8 @@ namespace Graphics
         
         uint xyzAxesBufferID;
 
-        uint cubeBufferID; 
+        uint groundBufferID; 
+        uint cubeBufferID;
         uint pyramidBufferID; 
         uint clockBufferID;
         uint coneBaseBufferID;
@@ -32,6 +39,8 @@ namespace Graphics
         mat4 ModelMatrix;
 
         mat4 ModelMatrix2;
+        mat4 ModelMatrix3;
+        mat4 ModelMatrix4;
 
         mat4 ViewMatrix;
         mat4 ProjectionMatrix;
@@ -40,13 +49,18 @@ namespace Graphics
         int ShaderViewMatrixID;
         int ShaderProjectionMatrixID;
 
-        const int clockEdges = 50; 
+        const int clockEdges = 50;
+        const float rotationSpeed = 1f;
+        float rotationAngle = 0;
 
         public float translationX=0, 
                      translationY=0, 
                      translationZ=0;
 
-        public vec3 scale = new vec3(1,1,1); 
+        public vec3 scale = new vec3(1,1,1);
+        Texture groundTexture;
+        Texture cubeTexture;
+        Texture clockTexture;
 
         Stopwatch timer = Stopwatch.StartNew();
 
@@ -56,6 +70,11 @@ namespace Graphics
             string projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             sh = new Shader(projectPath + "\\Shaders\\SimpleVertexShader.vertexshader", projectPath + "\\Shaders\\SimpleFragmentShader.fragmentshader");
             Gl.glClearColor(0, 0, 0.4f, 1);
+
+            groundTexture = new Texture(projectPath + "\\Textures\\Ground.jpg", 1);
+            cubeTexture = new Texture(projectPath + "\\Textures\\Cube.jpg", 1);
+            clockTexture = new Texture(projectPath + "\\Textures\\Clock.jpg", 1);
+
 
             float[] xyzAxesVertices = {
 		        //x
@@ -69,45 +88,51 @@ namespace Graphics
 		        0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 1.0f,  //B
             };
 
+            float[] groundVertices =
+            {
+                0.0f,0.0f, 0.0f, 0.0f, 0.0f, 0.0f,      0,0,
+                100.0f,0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    5,0,
+                100.0f,100.0f, 0.0f, 0.0f, 0.0f, 0.0f,  5,5,
+                0.0f,100.0f, 0.0f, 0.0f, 0.0f, 0.0f,    0,5,
+            };
             float[] cubeVertices =
             {
                 //BOTTOM FACE
-                0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 
-                10.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                10.0f, 40.0f, 0.0f,1.0f, 0.0f, 0.0f,
-                0.0f, 40.0f, 0.0f,1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f,  0.0f, 0.0f, 0.0f, 0.0f,    0,0,
+                10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    1,0,
+                10.0f, 40.0f, 0.0f,0.0f, 0.0f, 0.0f,    1,1,
+                0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f,    0,1,
 
                 //FAR SIDE FACE
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 20.0f, 1.0f, 0.0f, 0.0f,
-                10.0f, 0.0f, 20.0f,1.0f, 0.0f, 0.0f,
-                10.0f, 0.0f, 0.0f,1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 0.0f,  0.0f, 0.0f, 0.0f,    0,0,
+                0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f,    1,0,
+                10.0f, 0.0f, 20.0f,0.0f, 0.0f, 0.0f,    1,1,
+                10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    0,1,
 
                 //BACK FACE
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 20.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 40.0f, 20.0f,1.0f, 0.0f, 0.0f,
-                0.0f, 40.0f, 0.0f,1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 0.0f,  0.0f, 0.0f, 0.0f,    0,0,
+                0.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f,    1,0,
+                0.0f, 40.0f, 20.0f,0.0f, 0.0f, 0.0f,    1,1,
+                0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f,    0,1,
 
                 //NEAR SIDE FACE 
-                0.0f, 40.0f, 20.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 40.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                10.0f, 40.0f, 0.0f,1.0f, 0.0f, 0.0f,
-                10.0f, 40.0f, 20.0f,1.0f, 0.0f, 0.0f,
+                0.0f, 40.0f, 20.0f, 0.0f, 0.0f, 0.0f,   0,0,
+                0.0f, 40.0f, 0.0f,  0.0f, 0.0f, 0.0f,   1,0,
+                10.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f,   1,1,
+                10.0f, 40.0f, 20.0f,0.0f, 0.0f, 0.0f,   0,1,
 
                 //FRONT FACE
-                10.0f, 40.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                10.0f, 40.0f, 20.0f, 1.0f, 0.0f, 0.0f,
-                10.0f, 0.0f, 20.0f,1.0f, 0.0f, 0.0f,
-                10.0f, 0.0f, 0.0f,1.0f, 0.0f, 0.0f,
+                10.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0.0f,   0,0,
+                10.0f, 40.0f, 20.0f,0.0f, 0.0f, 0.0f,   1,0,
+                10.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f,   1,1,
+                10.0f, 0.0f, 0.0f,  0.0f, 0.0f, 0.0f,   0,1,
                 
                 //TOP FACE
-                0.0f, 0.0f, 20.0f, 1.0f, 0.0f, 1.0f,
-                10.0f, 0.0f, 20.0f, 1.0f, 0.0f, 1.0f,
-                10.0f, 40.0f, 20.0f,1.0f, 0.0f, 1.0f,
-                0.0f, 40.0f, 20.0f,1.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 20.0f,  0.0f, 0.0f, 0.0f,   0,0,
+                10.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f,   1,0,
+                10.0f, 40.0f, 20.0f,0.0f, 0.0f, 0.0f,   1,1,
+                0.0f, 40.0f, 20.0f, 0.0f, 0.0f, 0.0f,   0,1,
             }; 
-
             float[] pyramidVertices =
             {
                 //BASE
@@ -123,69 +148,67 @@ namespace Graphics
                 //SIDES
 
                 //(A,B)
-                0.0f, 0.0f, 20.0f,   0.0f, 0.0f, 1.0f, // A
-                10.0f, 0.0f, 20.0f,  0.0f, 0.0f, 1.0f, // B
-                5.0f, 10.0f, 40.0f,  0.0f, 0.0f, 1.0f, // Apex
-
-                //(B,C)
-                10.0f, 0.0f, 20.0f,  0.0f, 0.0f, 1.0f, // B
-                10.0f, 20.0f, 20.0f, 0.0f, 0.0f, 1.0f, // C
-                5.0f, 10.0f, 40.0f,  0.0f, 0.0f, 1.0f, // Apex
-
-                //(C,D)
-                10.0f, 20.0f, 20.0f, 0.0f, 0.0f, 1.0f, // C
-                0.0f, 20.0f, 20.0f,  0.0f, 0.0f, 1.0f, // D
-                5.0f, 10.0f, 40.0f,  0.0f, 0.0f, 1.0f, // Apex
-
-                //(D,A)
-                0.0f, 20.0f, 20.0f,  0.0f, 0.0f, 1.0f, // D
-                0.0f, 0.0f, 20.0f,   0.0f, 0.0f, 1.0f, // A
-                5.0f, 10.0f, 40.0f,  0.0f, 0.0f, 1.0f  // Apex
+                0.0f, 0.0f, 20.0f,   1.0f, 1.0f, 0.0f, // A
+                10.0f, 0.0f, 20.0f,  1.0f, 1.0f, 0.0f, // B
+                5.0f, 10.0f, 40.0f,  1.0f, 1.0f, 0.0f, // Apex
+                                                  
+                //(B,C)                           
+                10.0f, 0.0f, 20.0f,  1.0f, 1.0f, 0.0f, // B
+                10.0f, 20.0f, 20.0f, 1.0f, 1.0f, 0.0f, // C
+                5.0f, 10.0f, 40.0f,  1.0f, 1.0f, 0.0f, // Apex
+                                                  
+                //(C,D)                           
+                10.0f, 20.0f, 20.0f, 1.0f, 1.0f, 0.0f, // C
+                0.0f, 20.0f, 20.0f,  1.0f, 1.0f, 0.0f, // D
+                5.0f, 10.0f, 40.0f,  1.0f, 1.0f, 0.0f, // Apex
+                                                  
+                //(D,A)                           
+                0.0f, 20.0f, 20.0f,  1.0f, 1.0f, 0.0f, // D
+                0.0f, 0.0f, 20.0f,   1.0f, 1.0f, 0.0f, // A
+                5.0f, 10.0f, 40.0f,  1.0f, 1.0f, 0.0f  // Apex
             }; 
-
             float[] clockVertices = clockDraw( 10, centerY:  10, 100, 10, 0, 0, 0);
-
             float[] coneBaseVertices = {
                 //BASE CENTER
                 5.0f, 30.0f, 20.0f,1.0f, 1.0f, 0.0f,
                 // CIRCUMFERENCE
                 10.0f, 30.0f, 20.0f,   1.0f, 1.0f, 0.0f,
-                8.0f, 33.0f, 20.0f, 1.0f, 1.0f, 0.0f,
-                5.0f, 35.0f, 20.0f,   1.0f, 1.0f, 0.0f,
-                1.0f, 33.0f, 20.0f, 1.0f, 1.0f, 0.0f,
-                0.0f, 30.0f, 20.0f,   1.0f, 1.0f, 0.0f,
-                1.0f, 26.0f, 20.0f, 1.0f, 1.0f, 0.0f,
-                5.0f, 25.0f, 20.0f,   1.0f, 1.0f, 0.0f,
-                8.0f, 26.0f, 20.0f, 1.0f, 1.0f, 0.0f,
+                8.0f, 33.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                5.0f, 35.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                1.0f, 33.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                0.0f, 30.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                1.0f, 26.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                5.0f, 25.0f, 20.0f,    1.0f, 1.0f, 0.0f,
+                8.0f, 26.0f, 20.0f,    1.0f, 1.0f, 0.0f,
                 10.0f, 30.0f, 20.0f,   1.0f, 1.0f, 0.0f
             };
             float[] coneSideVertices = {
-                10.0f, 30.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 8.0f, 33.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 5.0f, 35.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 1.0f, 33.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 0.0f, 30.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 1.0f, 26.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 5.0f, 25.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                 8.0f, 26.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
-
-                10.0f, 30.0f, 20.0f,  1.0f, 1.0f, 0.0f,
-                 5.0f, 30.0f, 40.0f,  1.0f, 1.0f, 0.0f,
+                 10.0f, 30.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f,  1.0f,
+                                       
+                 8.0f, 33.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                       
+                 5.0f, 35.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                                   
+                 1.0f, 33.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                       
+                 0.0f, 30.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                       
+                 1.0f, 26.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                                   
+                 5.0f, 25.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                       
+                 8.0f, 26.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f, 1.0f,
+                                       
+                 10.0f, 30.0f, 20.0f,  0.0f, 0.0f, 1.0f,
+                 5.0f, 30.0f, 40.0f,  0.0f, 0.0f,  1.0f,
             };
 
 
@@ -196,17 +219,20 @@ namespace Graphics
             clockBufferID = GPU.GenerateBuffer(clockVertices);
             coneBaseBufferID = GPU.GenerateBuffer(coneBaseVertices);
             coneSideBufferID = GPU.GenerateBuffer(coneSideVertices);
+            groundBufferID = GPU.GenerateBuffer(groundVertices);
 
             // View matrix 
             ViewMatrix = glm.lookAt(
                         new vec3(50,  50, 50),
-                        new vec3(0, 0, 0),
+                        new vec3(0, 0,0),
                         new vec3(0, 0,1)
                 );
             // Model Matrix Initialization
             ModelMatrix = new mat4(1);
 
             ModelMatrix2 = new mat4(1);
+            ModelMatrix3 = new mat4(1);
+            ModelMatrix4 = new mat4(1);
 
             //ProjectionMatrix = glm.perspective(FOV, Width / Height, Near, Far);
             ProjectionMatrix = glm.perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
@@ -248,20 +274,47 @@ namespace Graphics
 
             #endregion
 
+            #region ground
+            Gl.glBindBuffer(Gl.GL_ARRAY_BUFFER, groundBufferID);
+
+            Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix4.to_array());
+
+            Gl.glEnableVertexAttribArray(0);
+            Gl.glVertexAttribPointer(0, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)0);
+            Gl.glEnableVertexAttribArray(1);
+            Gl.glVertexAttribPointer(1, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(3 * sizeof(float)));
+
+            Gl.glEnableVertexAttribArray(2);
+            Gl.glVertexAttribPointer(2, 2, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(6 * sizeof(float)));
+            groundTexture.Bind();
+
+            Gl.glDrawArrays(Gl.GL_QUADS, 0, 8);
+
+            Gl.glDisableVertexAttribArray(0);
+            Gl.glDisableVertexAttribArray(1);
+            Gl.glDisableVertexAttribArray(2);
+
+            #endregion
+
             #region Cube
             Gl.glBindBuffer(Gl.GL_ARRAY_BUFFER, cubeBufferID);
 
             Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix.to_array());
 
             Gl.glEnableVertexAttribArray(0);
-            Gl.glVertexAttribPointer(0, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 6 * sizeof(float), (IntPtr)0);
+            Gl.glVertexAttribPointer(0, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)0);
             Gl.glEnableVertexAttribArray(1);
-            Gl.glVertexAttribPointer(1, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 6 * sizeof(float), (IntPtr)(3 * sizeof(float)));
+            Gl.glVertexAttribPointer(1, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(3 * sizeof(float)));
 
-            Gl.glDrawArrays(Gl.GL_QUADS, 0, 6*4);
+            Gl.glEnableVertexAttribArray(2);
+            Gl.glVertexAttribPointer(2, 2, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(6 * sizeof(float)));
+            cubeTexture.Bind();
+
+            Gl.glDrawArrays(Gl.GL_QUADS, 0, 24);
 
             Gl.glDisableVertexAttribArray(0);
             Gl.glDisableVertexAttribArray(1);
+            Gl.glDisableVertexAttribArray(2);
 
             #endregion
 
@@ -297,6 +350,10 @@ namespace Graphics
             Gl.glEnableVertexAttribArray(2);
             Gl.glVertexAttribPointer(2, 2, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(6 * sizeof(float)));
 
+            Gl.glEnableVertexAttribArray(2);
+            Gl.glVertexAttribPointer(2, 2, Gl.GL_FLOAT, Gl.GL_FALSE, 8 * sizeof(float), (IntPtr)(6 * sizeof(float)));
+            clockTexture.Bind();
+
             Gl.glDrawArrays(Gl.GL_POLYGON, 0, clockEdges);
 
             Gl.glDisableVertexAttribArray(0);
@@ -307,7 +364,7 @@ namespace Graphics
             #region Cone
             // Draw the base
             Gl.glBindBuffer(Gl.GL_ARRAY_BUFFER, coneBaseBufferID);
-            Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix.to_array());
+            Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix3.to_array());
             Gl.glEnableVertexAttribArray(0);
             Gl.glVertexAttribPointer(0, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 6 * sizeof(float), (IntPtr)0);
             Gl.glEnableVertexAttribArray(1);
@@ -318,7 +375,7 @@ namespace Graphics
 
             // Draw sides faces
             Gl.glBindBuffer(Gl.GL_ARRAY_BUFFER, coneSideBufferID);
-            Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix.to_array());
+            Gl.glUniformMatrix4fv(ShaderModelMatrixID, 1, Gl.GL_FALSE, ModelMatrix3.to_array());
             Gl.glEnableVertexAttribArray(0);
             Gl.glVertexAttribPointer(0, 3, Gl.GL_FLOAT, Gl.GL_FALSE, 6 * sizeof(float), (IntPtr)0);
             Gl.glEnableVertexAttribArray(1);
@@ -347,10 +404,12 @@ namespace Graphics
 
             return verticies.ToArray();
         }
+        
         public void Update()
         {
             timer.Stop();
             var deltaTime = timer.ElapsedMilliseconds/1000.0f;
+            rotationAngle+=deltaTime*rotationSpeed;
 
             List<mat4> transformations = new List<mat4>();
             transformations.Add(glm.translate(new mat4(1), new vec3(translationX, translationY, translationZ)));
@@ -365,9 +424,21 @@ namespace Graphics
             clockTransformations.Add(glm.scale(new mat4(1), new vec3(1.5f, 1.5f, 1.5f)));
             ModelMatrix2 =  MathHelper.MultiplyMatrices(clockTransformations);
 
+            List<mat4> ConeTransformations = new List<mat4>();
+            ConeTransformations.Add(glm.translate(new mat4(1), new vec3(-5f, -30f, -20f)));
+            ConeTransformations.Add(glm.rotate(rotationAngle, new vec3(0, 0, 1)));
+            ConeTransformations.Add(glm.translate(new mat4(1), new vec3(5f, 30f, 20f)));
+            ConeTransformations.Add(glm.translate(new mat4(1), new vec3(translationX, translationY, translationZ)));
+            ConeTransformations.Add(glm.scale(new mat4(1), scale));
+            ModelMatrix3 = MathHelper.MultiplyMatrices(ConeTransformations);
+
+            List<mat4> groundTransformations = new List<mat4>();
+            ModelMatrix4 = MathHelper.MultiplyMatrices(groundTransformations);
+
             timer.Reset();
             timer.Start();
         }
+        
         public void CleanUp()
         {
             sh.DestroyShader();

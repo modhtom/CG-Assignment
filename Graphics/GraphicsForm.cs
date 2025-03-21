@@ -43,7 +43,7 @@ namespace Graphics
                 renderer.translationX += speed;
             if (e.KeyChar == 'a')
                 renderer.translationX -= speed;
-                
+
             if (e.KeyChar == 'w')
                 renderer.translationY += speed;
             if (e.KeyChar == 's')
@@ -56,19 +56,18 @@ namespace Graphics
 
             if (e.KeyChar =='q')
             {
-                renderer.scale.x *=1.1f;
-                renderer.scale.y *=1.1f;
-                renderer.scale.z *=1.1f;
+                renderer.scale.x *=1.5f;
+                renderer.scale.y *=1.5f;
+                renderer.scale.z *=1.5f;
             }
 
             if (e.KeyChar =='e')
             {
-                renderer.scale.x /=1.1f;
-                renderer.scale.y /=1.1f;
-                renderer.scale.z /=1.1f;
+                renderer.scale.x /=1.5f;
+                renderer.scale.y /=1.5f;
+                renderer.scale.z /=1.5f;
             }
-
-            simpleOpenGlControl1.Refresh();
+        simpleOpenGlControl1.Refresh();
         }
 
     }
